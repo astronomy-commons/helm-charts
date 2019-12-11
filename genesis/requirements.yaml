@@ -1,0 +1,8 @@
+# requirements.yaml
+dependencies:
+- name: aws-hub
+  version: '0.0.1'
+  repository: 'https://astronomy-commons.github.io/helm-charts/'
+  import-values:
+  - child: rbac
+    parent: rbac
