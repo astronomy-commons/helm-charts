@@ -1,4 +1,5 @@
-aws_hub:
+aws-hub:
 - aws-hub-0.0.1.tgz
 
-genesis: []
+genesis:
+- genesis-0.0.1.tgz
