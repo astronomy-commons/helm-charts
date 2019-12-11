@@ -6,7 +6,9 @@ helm repo add astronomy-data-commons https://astronomy-commons.github.io/helm-ch
 helm repo update
 ```
 
-{% assign genesis_releases = site.data.releases.genesis %}
+{% assign entries = site.data.index.entries %}
+
+{% assign genesis_releases = entries['genesis'] %}
 {% if genesis_releases.size > 0 %}
 ## Genesis Helm Chart
 
@@ -23,7 +25,7 @@ helm repo update
 {% endif %}
 
 
-{% assign aws_hub_releases = site.data.releases.aws_hub %}
+{% assign aws_hub_releases = entries['aws-hub'] %}
 {% if aws_hub_releases.size > 0 %}
 ## AWS Helm Chart
 
