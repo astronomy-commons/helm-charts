@@ -2,9 +2,9 @@ apiVersion: v1
 entries:
   aws-hub:
   - apiVersion: v1
-    created: "2019-12-10T22:10:28.755541-08:00"
+    created: "2019-12-10T22:41:05.148667-08:00"
     description: JupyterHub entrypoint to AWS EC2 on EKS
-    digest: d7be15a20017305b92adf8cf0bf3923fd37bf78029008e0154c26b8c5ce42601
+    digest: b7d76a5144b02a55c64c8d1ecbf5dea280f53cb9c8fec439097bdf103be8be27
     maintainers:
     - email: stevengs@uw.edu
       name: Steven Stetzler
@@ -12,4 +12,16 @@ entries:
     urls:
     - https://astronomy-commons.github.io/helm-charts/aws-hub-0.0.1.tgz
     version: 0.0.1
-generated: "2019-12-10T22:10:28.753016-08:00"
+  genesis:
+  - apiVersion: v1
+    created: "2019-12-10T22:41:05.152338-08:00"
+    description: JupyterHub with Integration for the Astronomy Data Commons tools
+    digest: 2981953eeb1e197ef96e761a82c0948a4badd981913e926ca0e3df8267e529ce
+    maintainers:
+    - email: stevengs@uw.edu
+      name: Steven Stetzler
+    name: genesis
+    urls:
+    - https://astronomy-commons.github.io/helm-charts/genesis-0.0.1.tgz
+    version: 0.0.1
+generated: "2019-12-10T22:41:05.146722-08:00"
