@@ -10,7 +10,7 @@ helm repo update
 
 {% assign genesis_releases = entries['genesis'] %}
 {% if genesis_releases.size > 0 %}
-## Genesis Helm Chart
+## genesis Helm Chart
 
 <table>
     <tr>
@@ -27,7 +27,7 @@ helm repo update
 
 {% assign aws_hub_releases = entries['aws-hub'] %}
 {% if aws_hub_releases.size > 0 %}
-## AWS Helm Chart
+## aws-hub Helm Chart
 
 <table>
     <tr>
