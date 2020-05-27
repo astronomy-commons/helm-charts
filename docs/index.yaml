@@ -2,9 +2,9 @@ apiVersion: v1
 entries:
   aws-hub:
   - apiVersion: v1
-    created: "2020-05-26T17:34:22.969709-07:00"
+    created: "2020-05-26T17:38:49.582945-07:00"
     description: JupyterHub entrypoint to AWS EC2 on EKS
-    digest: 7b8621117439117901a5cbb27c7bca0dc24e0cc601142c278af6f39fb409d4d2
+    digest: b7d76a5144b02a55c64c8d1ecbf5dea280f53cb9c8fec439097bdf103be8be27
     maintainers:
     - email: stevengs@uw.edu
       name: Steven Stetzler
@@ -12,31 +12,9 @@ entries:
     urls:
     - aws-hub-0.0.1.tgz
     version: 0.0.1
-  - apiVersion: v1
-    created: "2020-05-26T17:34:22.98153-07:00"
-    description: JupyterHub entrypoint to AWS EC2 on EKS
-    digest: b7d76a5144b02a55c64c8d1ecbf5dea280f53cb9c8fec439097bdf103be8be27
-    maintainers:
-    - email: stevengs@uw.edu
-      name: Steven Stetzler
-    name: aws-hub
-    urls:
-    - _site/aws-hub-0.0.1.tgz
-    version: 0.0.1
-  - apiVersion: v1
-    created: "2020-05-26T17:34:22.985743-07:00"
-    description: JupyterHub entrypoint to AWS EC2 on EKS
-    digest: b7d76a5144b02a55c64c8d1ecbf5dea280f53cb9c8fec439097bdf103be8be27
-    maintainers:
-    - email: stevengs@uw.edu
-      name: Steven Stetzler
-    name: aws-hub
-    urls:
-    - docs/aws-hub-0.0.1.tgz
-    version: 0.0.1
   genesis:
   - apiVersion: v1
-    created: "2020-05-26T17:34:22.983557-07:00"
+    created: "2020-05-26T17:38:49.585872-07:00"
     description: JupyterHub with Integration for the Astronomy Data Commons tools
     digest: 2981953eeb1e197ef96e761a82c0948a4badd981913e926ca0e3df8267e529ce
     maintainers:
@@ -44,22 +22,11 @@ entries:
       name: Steven Stetzler
     name: genesis
     urls:
-    - _site/genesis-0.0.1.tgz
-    version: 0.0.1
-  - apiVersion: v1
-    created: "2020-05-26T17:34:22.988112-07:00"
-    description: JupyterHub with Integration for the Astronomy Data Commons tools
-    digest: 2981953eeb1e197ef96e761a82c0948a4badd981913e926ca0e3df8267e529ce
-    maintainers:
-    - email: stevengs@uw.edu
-      name: Steven Stetzler
-    name: genesis
-    urls:
-    - docs/genesis-0.0.1.tgz
+    - genesis-0.0.1.tgz
     version: 0.0.1
   genesis-dev:
   - apiVersion: v1
-    created: "2020-05-26T17:34:22.973215-07:00"
+    created: "2020-05-26T17:38:49.588547-07:00"
     description: JupyterHub with Integration for the Astronomy Data Commons tools
     digest: 089a2ba5826fb3d7a7c07cb27041207d7447f008ec89bc28f9ab2c735f7555be
     maintainers:
@@ -69,20 +36,9 @@ entries:
     urls:
     - genesis-dev-0.0.1.tgz
     version: 0.0.1
-  - apiVersion: v1
-    created: "2020-05-26T17:34:22.991155-07:00"
-    description: JupyterHub with Integration for the Astronomy Data Commons tools
-    digest: 089a2ba5826fb3d7a7c07cb27041207d7447f008ec89bc28f9ab2c735f7555be
-    maintainers:
-    - email: stevengs@uw.edu
-      name: Steven Stetzler
-    name: genesis-dev
-    urls:
-    - docs/genesis-dev-0.0.1.tgz
-    version: 0.0.1
   sssc-hub:
   - apiVersion: v1
-    created: "2020-05-26T17:34:22.978706-07:00"
+    created: "2020-05-26T17:38:49.591354-07:00"
     description: JupyterHub for the Solar System Science Collaboration
     digest: 4351d3c40c2a11a48d006f91b903300860f90e5075b8849207930b090182d243
     maintainers:
@@ -92,15 +48,4 @@ entries:
     urls:
     - sssc-hub-0.1.tgz
     version: "0.1"
-  - apiVersion: v1
-    created: "2020-05-26T17:34:22.99342-07:00"
-    description: JupyterHub for the Solar System Science Collaboration
-    digest: 4351d3c40c2a11a48d006f91b903300860f90e5075b8849207930b090182d243
-    maintainers:
-    - email: stevengs@uw.edu
-      name: Steven Stetzler
-    name: sssc-hub
-    urls:
-    - docs/sssc-hub-0.1.tgz
-    version: "0.1"
-generated: "2020-05-26T17:34:22.966252-07:00"
+generated: "2020-05-26T17:38:49.576506-07:00"
