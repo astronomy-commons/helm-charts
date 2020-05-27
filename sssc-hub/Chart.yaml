@@ -1,0 +1,7 @@
+apiVersion: v1
+name: "sssc-hub"
+version: 0.1
+description: "JupyterHub for the Solar System Science Collaboration"
+maintainers:
+  - name: "Steven Stetzler"
+    email: "stevengs@uw.edu"
