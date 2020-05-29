@@ -40,3 +40,19 @@ helm repo update
     {% endfor %}
 </table>
 {% endif %}
+
+{% assign sssc_hub_releases = entries['sssc-hub'] %}
+{% if sssc_hub_releases.size > 0 %}
+## sssc-hub Helm Chart
+
+<table>
+    <tr>
+        <th>release</th>
+    </tr>
+    {% for version in sssc_hub_releases %}
+    <tr>
+        <td><a href="{{ version | relative_url }}">{{ version }}</a></td>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
