@@ -1,0 +1,78 @@
+rbac:
+  enabled: false
+
+nfs-server-provisioner:
+  persistence:
+    enabled: false
+    storageClass: "gp2-us-west-2a"
+    size: 50Gi
+  storageClass:
+    name: "growth-hub-nfs-sc"
+
+jupyterhub:
+  debug:
+    enabled: true
+  singleuser:
+    # notebook image
+    image:
+      name: astronomycommons/growth-hub-notebook
+      tag: latest
+      pullPolicy: Always
+    # notebook storage options
+    storage:
+      type: "dynamic"
+      homeMountPath: '/home/{username}'
+      dynamic:
+        storageClass: gp2-us-west-2a
+      capacity: 10Gi
+      
+      extraVolumes:
+      # # consume the NFS PVC
+      # - name: "nfs-volume"
+      #   persistentVolumeClaim:
+      #     claimName: "growth-hub-nfs-pvc"
+      # consume the ConfigMaps
+      - name: "start-notebook-volume"
+        configMap:
+          name: "start-notebook.d"
+      - name: "before-notebook-volume"
+        configMap:
+          name: "before-notebook.d"
+      extraVolumeMounts:
+      # Mount home directories on the NFS server
+      # - name: "nfs-volume"
+      #   mountPath: "/home/{username}/"
+      # - name: "nfs-volume"
+      #   mountPath: "/home/{username}"
+      #   # subPath creates a folder within the NFS filesystem for the user
+      #   subPath: "{username}"
+      # Mount the notebook configurations
+      - name: "start-notebook-volume"
+        mountPath: "/usr/local/bin/start-notebook.d"
+      - name: "before-notebook-volume"
+        mountPath: "/usr/local/bin/before-notebook.d"
+
+  hub:
+    extraConfig:
+      run_user_as_root: |
+        c.KubeSpawner.uid = 0
+        c.Spawner.args.append("--allow-root")
+      
+      auth: |
+        import oauthenticator
+        from tornado import gen
+        import jupyterhub
+
+        class MyGitHubAuth(oauthenticator.github.GitHubOAuthenticator):
+          @gen.coroutine
+          def pre_spawn_start(self, user, spawner):
+              auth_state = yield user.get_auth_state()
+              print("auth_state:", auth_state)
+              if not auth_state:
+                  # auth_state not enabled
+                  return
+              spawner.environment["NB_UID"] = str(auth_state["github_user"]["id"])
+              spawner.environment["NB_USER"] = str(auth_state["github_user"]["login"])
+
+        c.JupyterHub.authenticator_class = MyGitHubAuth
+        c.Authenticator.enable_auth_state = True
