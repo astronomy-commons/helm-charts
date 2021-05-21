@@ -8,6 +8,22 @@ helm repo update
 
 {% assign entries = site.data.releases %}
 
+{% assign genesis_dev_releases = entries['genesis-dev'] %}
+{% if genesis_dev_releases.size > 0 %}
+## genesis-dev Helm Chart
+
+<table>
+    <tr>
+        <th>release</th>
+    </tr>
+    {% for version in genesis_dev_releases %}
+    <tr>
+        <td><a href="{{ version | relative_url }}">{{ version }}</a></td>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
+
 {% assign genesis_releases = entries['genesis'] %}
 {% if genesis_releases.size > 0 %}
 ## genesis Helm Chart
