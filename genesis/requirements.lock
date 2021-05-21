@@ -1,0 +1,6 @@
+dependencies:
+- name: aws-hub
+  repository: https://astronomy-commons.github.io/helm-charts/
+  version: 0.0.1
+digest: sha256:d184e5ee41a477ad9ceb7bc726ea12dcc761bd4a6515315cdc2c4f8286cfe048
+generated: "2021-05-21T11:20:04.081361-07:00"

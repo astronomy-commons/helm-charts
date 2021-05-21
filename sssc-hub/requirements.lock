@@ -3,7 +3,7 @@ dependencies:
   repository: https://jupyterhub.github.io/helm-chart/
   version: 0.9.0
 - name: nfs-server-provisioner
-  repository: https://kubernetes-charts.storage.googleapis.com/
-  version: 1.0.0
-digest: sha256:156ed50868097b88d42e12a663f4d0c2530d747b40813535244dd2e6b37486f7
-generated: "2020-05-26T11:01:11.663375-07:00"
+  repository: https://charts.helm.sh/stable
+  version: ~1.0.0
+digest: sha256:30b3dedcbbaf42034bbd9042e42bb4532c0b6eaa20f2866df8ccd1dcdba80fa1
+generated: "2021-05-21T11:45:14.302388-07:00"

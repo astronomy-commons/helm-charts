@@ -1,0 +1,9 @@
+dependencies:
+- name: aws-hub
+  repository: https://astronomy-commons.github.io/helm-charts/
+  version: 0.0.1
+- name: nfs-server-provisioner
+  repository: https://charts.helm.sh/stable
+  version: ~1.0.0
+digest: sha256:4e1b02b6ea6dd52ed712dd587e828e7f7759dd21f70206f054f137a1b8d20cf1
+generated: "2021-05-21T11:40:59.605744-07:00"

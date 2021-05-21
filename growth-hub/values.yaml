@@ -3,9 +3,9 @@ rbac:
 
 nfs-server-provisioner:
   persistence:
-    enabled: false
+    enabled: true
     storageClass: "gp2-us-west-2a"
-    size: 50Gi
+    size: 100Gi
   storageClass:
     name: "growth-hub-nfs-sc"
 
@@ -66,6 +66,15 @@ jupyterhub:
         class MyGitHubAuth(oauthenticator.github.GitHubOAuthenticator):
           @gen.coroutine
           def pre_spawn_start(self, user, spawner):
+              try:
+                  print(c.Authenticator.admin_users)
+              except Exception as e:
+                  print(e)
+              try:
+                  print(self.admin_users)
+              except Exception as e:
+                  print(e)
+
               auth_state = yield user.get_auth_state()
               print("auth_state:", auth_state)
               if not auth_state:

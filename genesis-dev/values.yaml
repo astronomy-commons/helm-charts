@@ -1,8 +1,14 @@
 rbac:
   enabled: true
 
+nfs-server-provisioner:
+  persistence:
+    enabled: true
+    storageClass: "gp2"
+    size: 100Gi
+
 aws-hub:
-  jupyterhub:    
+  jupyterhub:
     hub:
       allowNamedServers: true
       extraConfig:
@@ -34,7 +40,7 @@ aws-hub:
           c.JupyterHub.authenticator_class = MyGitHubAuth
           c.Authenticator.enable_auth_state = True
           
-          # os.environ["JUPYTERHUB_CRYPT_KEY"] = secrets.token_hex(32)
+          os.environ["JUPYTERHUB_CRYPT_KEY"] = secrets.token_hex(32)
 
     singleuser:
       # set the hub to deploy an image with AXS installed
@@ -54,7 +60,7 @@ aws-hub:
         - name: "spark-config-volume"
           configMap:
             name: "spark-config"
-        # consume the nfs PVC that comes with axs-hub
+        # consume the nfs PVC that comes with the genesis helm chart
         - name: "nfs-volume"
           persistentVolumeClaim:
             claimName: "nfs"
@@ -62,37 +68,58 @@ aws-hub:
         - name: "start-notebook-volume"
           configMap:
             name: "start-notebook.d"
-        - name: "begin-notebook-volume"
+        - name: "before-notebook-volume"
           configMap:
-            name: "begin-notebook.d"
+            name: "before-notebook.d"
+        - name: "nfs-code-volume"
+          persistentVolumeClaim:
+            claimName: "nfs-code"
+        - name: "s3-scratch-volume"
+          persistentVolumeClaim:
+            claimName: "csi-s3-pvc"
+        # - name: "epyc-sshfs"
+        #   persistentVolumeClaim:
+        #     claimName: "epyc-sshfs"
         extraVolumeMounts:
         # mount spark configurations from configMap
         # mount spark-defaults.conf to spark-defaults.conf.static
         - name: "spark-config-volume"
-          mountPath: "/usr/local/axs/conf/spark-defaults.conf.static"
+          mountPath: "/opt/axs/conf/spark-defaults.conf.static"
           # subPath access the specified file within the config map
           subPath: "spark-defaults.conf"
         # mount spark-env.sh to spark-env.sh.static
         - name: "spark-config-volume"
-          mountPath: "/usr/local/axs/conf/spark-env.sh.static"
+          mountPath: "/opt/axs/conf/spark-env.sh.static"
           subPath: "spark-env.sh"
-        # mount hive-site.xml
+        # mount hive-site.xml to hive-site.xml.static
         - name: "spark-config-volume"
-          mountPath: "/usr/local/axs/conf/hive-site.xml"
+          mountPath: "/opt/axs/conf/hive-site.xml.static"
           subPath: "hive-site.xml"
+        # mount executor.yaml to executor.yaml.static
+        - name: "spark-config-volume"
+          mountPath: "/opt/axs/conf/executor.yaml.static"
+          subPath: "executor.yaml"
         # mount the efs-backed filesystem to /nfs
         # creates a folder for the user in /nfs and /nfs contains all other users
         - name: "nfs-volume"
-          mountPath: "/nfs/{username}"
+          mountPath: "/home/{username}"
           # subPath creates a folder within the efs filesystem for the user
           subPath: "{username}"
         - name: "nfs-volume"
-          mountPath: "/nfs"
+          mountPath: "/home"
+        - name: "nfs-code-volume"
+          mountPath: "/opt/conda/envs"
         # jupyter configurations
         - name: "start-notebook-volume"
           mountPath: "/usr/local/bin/start-notebook.d"
-        - name: "begin-notebook-volume"
-          mountPath: "/usr/local/bin/begin-notebook.d"
+        - name: "before-notebook-volume"
+          mountPath: "/usr/local/bin/before-notebook.d"
+        # S3 scratch space
+        - name: "s3-scratch-volume"
+          mountPath: "/s3"
+        # Epyc sshfs
+        # - name: "epyc-sshfs"
+        #   mountPath: "/epyc"
 
 
 spark-defaults.conf:
@@ -114,25 +141,13 @@ spark-defaults.conf:
     spark.kubernetes.executor.limit.cores=1.0
   000-sql-defaults: |
     spark.sql.execution.arrow.enabled=true
+    spark.sql.hive.metastore.sharedPrefixes=com.mysql.jdbc,org.postgresql,com.microsoft.sqlserver,oracle.jdbc,org.apache.derby
   000-java-defaults: |
     spark.driver.extraJavaOptions -Dderby.system.home=/tmp/derby
   000-jar-defaults: |
     spark.jars /usr/local/axs/python/axs/AxsUtilities-1.0-SNAPSHOT.jar
 
 spark-env.sh:
-
-hive-site.xml: |
-  <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-  <configuration>
-    <property>
-      <name>javax.jdo.option.ConnectionURL</name>
-      <value>jdbc:derby:/home/jovyan/.axs/metastore_db;create=true</value>
-    </property>
-    <property>
-      <name>javax.jdo.option.ConnectionDriverName</name>
-      <value>org.apache.derby.jdbc.EmbeddedDriver</value>
-    </property>
-  </configuration>
 
 start-notebook:
   001-env-vars.sh: |
@@ -147,7 +162,7 @@ start-notebook:
     prefix=spark.executorEnv
     if [ -n "${NB_USER}" ]; then
       echo "${prefix}.NB_USER ${NB_USER}" >> $conf_file
-      echo "spark.kubernetes.executor.podNamePrefix ${NB_USER}-spark" >> $conf_file
+      # echo "spark.kubernetes.executor.podNamePrefix ${NB_USER}-spark" >> $conf_file
       echo "spark.kubernetes.driver.pod.name jupyter-${NB_USER}" | awk '{print tolower($0)}' >> $conf_file
     fi
     if [ -n "${NB_UID}" ]; then
@@ -156,33 +171,71 @@ start-notebook:
     echo "${prefix}.JAVA_HOME=${JAVA_HOME}" >> $conf_file
   
   999-merge-spark-files.sh: |
-    static_conf_file=$SPARK_HOME/conf/spark-defaults.conf.static
-    dynamic_conf_file=$SPARK_HOME/conf/spark-defaults.conf.dynamic
-    conf_file=$SPARK_HOME/conf/spark-defaults.conf
+    merge () {
+      file=$1
+      static_file="$file.static"
+      dynamic_file="$file.dynamic"
 
-    if [ -f "$conf_file" ]; then
-      rm -f $conf_file
-    fi
-    if [ -f "$static_conf_file" ]; then
-      cat $static_conf_file >> $conf_file
-    fi
-    if [ -f "$dynamic_conf_file" ]; then
-      echo "" >> $conf_file
-      cat $dynamic_conf_file >> $conf_file
-    fi
+      if [ -f "$file" ]; then
+        rm -f $file
+      fi
+      if [ -f "$static_file" ]; then
+        cat $static_file >> $file
+      fi
+      if [ -f "$dynamic_file" ]; then
+        echo "" >> $file
+        cat $dynamic_file >> $file
+      fi
+    }
 
-    static_env_file=$SPARK_HOME/conf/spark-env.sh.static
-    dynamic_env_file=$SPARK_HOME/conf/spark-env.sh.dynamic
-    env_file=$SPARK_HOME/conf/spark-env.sh
+    merge "$SPARK_HOME/conf/spark-defaults.conf"
+    merge "$SPARK_HOME/conf/spark-env.sh"
+    merge "$SPARK_HOME/conf/hive-site.xml"
+    merge "$SPARK_HOME/conf/executor.yaml"
 
-    if [ -f "$env_file" ]; then
-      rm -f $env_file
-    fi
-    if [ -f "$static_env_file" ]; then
-      cat $static_env_file >> $env_file
-    fi
-    if [ -f "$dynamic_env_file" ]; then
-      echo "" >> $env_file
-      cat $dynamic_env_file >> $env_file
-    fi
+    # static_conf_file=$SPARK_HOME/conf/spark-defaults.conf.static
+    # dynamic_conf_file=$SPARK_HOME/conf/spark-defaults.conf.dynamic
+    # conf_file=$SPARK_HOME/conf/spark-defaults.conf
+
+    # if [ -f "$conf_file" ]; then
+    #   rm -f $conf_file
+    # fi
+    # if [ -f "$static_conf_file" ]; then
+    #   cat $static_conf_file >> $conf_file
+    # fi
+    # if [ -f "$dynamic_conf_file" ]; then
+    #   echo "" >> $conf_file
+    #   cat $dynamic_conf_file >> $conf_file
+    # fi
+
+    # static_env_file=$SPARK_HOME/conf/spark-env.sh.static
+    # dynamic_env_file=$SPARK_HOME/conf/spark-env.sh.dynamic
+    # env_file=$SPARK_HOME/conf/spark-env.sh
+
+    # if [ -f "$env_file" ]; then
+    #   rm -f $env_file
+    # fi
+    # if [ -f "$static_env_file" ]; then
+    #   cat $static_env_file >> $env_file
+    # fi
+    # if [ -f "$dynamic_env_file" ]; then
+    #   echo "" >> $env_file
+    #   cat $dynamic_env_file >> $env_file
+    # fi
+
+    # static_hive_file=$SPARK_HOME/conf/hive-site.xml.static
+    # dynamic_hive_file=$SPARK_HOME/conf/hive-site.xml.dynamic
+    # hive_file=$SPARK_HOME/conf/hive-site.xml
+
+    # if [ -f "$hive_file" ]; then
+    #   rm -f $hive_file
+    # fi
+    # if [ -f "$static_hive_file" ]; then
+    #   cat $static_hive_file >> $hive_file
+    # fi
+    # if [ -f "$dynamic_hive_file" ]; then
+    #   echo "" >> $hive_file
+    #   cat $dynamic_hive_file >> $hive_file
+    # fi
+
 
