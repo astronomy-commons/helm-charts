@@ -1,0 +1,42 @@
+apiVersion: v1
+entries:
+  aws-hub:
+  - apiVersion: v1
+    created: 2021-06-02T22:02:01.783563202Z
+    description: JupyterHub entrypoint to AWS EC2 on EKS
+    digest: 68ca1dee7ca0a752e0419b93a3ba1bb4a0c669017dba15ea33dd4f48b11d0d45
+    maintainers:
+    - email: stevengs@uw.edu
+      name: Steven Stetzler
+    name: aws-hub
+    urls:
+    - http://127.0.0.1:8879/charts/aws-hub-0.0.1.tgz
+    version: 0.0.1
+  nfs-server-provisioner:
+  - apiVersion: v1
+    appVersion: 2.3.0
+    created: 2021-06-02T22:02:01.784132231Z
+    description: nfs-server-provisioner is an out-of-tree dynamic provisioner for
+      Kubernetes. You can use it to quickly & easily deploy shared storage that works
+      almost anywhere.
+    digest: 2f2168da2a6b3ec0b0a04eebc8414f4d95e4d34eecedce312491385d5c2ebb85
+    home: https://github.com/kubernetes/charts/tree/master/stable/nfs-server-provisioner
+    keywords:
+    - nfs
+    - storage
+    maintainers:
+    - email: kiall@macinnes.ie
+      name: kiall
+    - email: kvapss@gmail.com
+      name: kvaps
+    - email: joaocc-dev@live.com
+      name: joaocc
+    - email: naseem@transit.app
+      name: naseemkullah
+    name: nfs-server-provisioner
+    sources:
+    - https://github.com/kubernetes-incubator/external-storage/tree/master/nfs
+    urls:
+    - http://127.0.0.1:8879/charts/nfs-server-provisioner-1.0.0.tgz
+    version: 1.0.0
+generated: 2021-06-02T22:02:01.778015123Z

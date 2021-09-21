@@ -1,7 +1,7 @@
 # requirements.yaml
 dependencies:
 - name: aws-hub
-  version: '0.0.2'
+  version: '0.0.3'
   repository: 'https://astronomy-commons.github.io/helm-charts/'
   # repository: 'http://127.0.0.1:8879'
   import-values:
